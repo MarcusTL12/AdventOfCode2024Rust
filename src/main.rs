@@ -1,10 +1,6 @@
-// #![feature(slice_as_chunks, step_trait, concat_bytes)]
-
 use std::{env, fmt::Display, fs::read_to_string, time::Instant};
 
 use home::home_dir;
-
-// mod util;
 
 mod day1;
 mod day2;
