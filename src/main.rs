@@ -23,11 +23,11 @@ impl Display for TaskResult {
     }
 }
 
-// impl TaskResult {
-//     fn generic<T: Display + 'static>(x: T) -> TaskResult {
-//         Self::Generic(Box::new(x))
-//     }
-// }
+impl TaskResult {
+    fn generic<T: Display + 'static>(x: T) -> TaskResult {
+        Self::Generic(Box::new(x))
+    }
+}
 
 impl<T: TryInto<i64> + Clone + Display + 'static> From<T> for TaskResult
 where
@@ -37,7 +37,7 @@ where
         if let Ok(n) = value.clone().try_into() {
             Self::Number(n)
         } else {
-            Self::Generic(Box::new(value))
+            Self::generic(value)
         }
     }
 }
