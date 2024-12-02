@@ -7,6 +7,7 @@ use home::home_dir;
 // mod util;
 
 mod day1;
+mod day2;
 
 enum TaskResult {
     Number(i64),
@@ -43,7 +44,7 @@ where
 
 type Day = [fn(String) -> TaskResult; 2];
 
-const DAYS: &[Day] = &[day1::PARTS];
+const DAYS: &[Day] = &[day1::PARTS, day2::PARTS];
 
 fn load_input(day: usize, example: usize) -> String {
     let path = home_dir()
