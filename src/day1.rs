@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use arrayvec::ArrayVec;
 
 use crate::{Day, TaskResult};
@@ -30,7 +32,10 @@ fn part1(input: String) -> TaskResult {
 }
 
 fn part2(input: String) -> TaskResult {
-    // let mut 
+    let mut counter1 = HashMap::new();
+    let mut counter2 = HashMap::new();
+
+    let mut s = 0;
 
     for [x, y] in input.lines().map(|l| {
         l.split_ascii_whitespace()
@@ -39,8 +44,11 @@ fn part2(input: String) -> TaskResult {
             .into_inner()
             .unwrap()
     }) {
-
+        counter1.entry(x).and_modify(|c| *c += 1).or_insert(1);
+        s += counter2.get(&x).unwrap_or(&0) * x;
+        counter2.entry(y).and_modify(|c| *c += 1).or_insert(1);
+        s += counter1.get(&y).unwrap_or(&0) * y;
     }
 
-    todo!("{input}")
+    TaskResult::Number(s as i64)
 }
