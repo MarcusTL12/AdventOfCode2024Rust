@@ -8,17 +8,35 @@ use home::home_dir;
 
 mod day1;
 
-#[derive(Debug)]
 enum TaskResult {
-    // Text(String),
     Number(i64),
+    Generic(Box<dyn Display>),
 }
 
 impl Display for TaskResult {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            // Self::Text(s) => s.fmt(f),
             Self::Number(n) => n.fmt(f),
+            Self::Generic(s) => s.fmt(f),
+        }
+    }
+}
+
+// impl TaskResult {
+//     fn generic<T: Display + 'static>(x: T) -> TaskResult {
+//         Self::Generic(Box::new(x))
+//     }
+// }
+
+impl<T: TryInto<i64> + Clone + Display + 'static> From<T> for TaskResult
+where
+    T::Error: std::fmt::Debug,
+{
+    fn from(value: T) -> Self {
+        if let Ok(n) = value.clone().try_into() {
+            Self::Number(n)
+        } else {
+            Self::Generic(Box::new(value))
         }
     }
 }

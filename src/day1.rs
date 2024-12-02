@@ -23,11 +23,11 @@ fn part1(input: String) -> TaskResult {
     a.sort();
     b.sort();
 
-    TaskResult::Number(
+    TaskResult::from(
         a.into_iter()
             .zip(b)
             .map(|(x, y)| x.abs_diff(y))
-            .sum::<u64>() as i64,
+            .sum::<u64>(),
     )
 }
 
@@ -50,5 +50,5 @@ fn part2(input: String) -> TaskResult {
         s += counter1.get(&y).unwrap_or(&0) * y;
     }
 
-    TaskResult::Number(s as i64)
+    TaskResult::from(s)
 }
