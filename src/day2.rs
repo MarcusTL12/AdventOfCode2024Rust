@@ -1,5 +1,3 @@
-use arrayvec::ArrayVec;
-
 use crate::{Day, TaskResult};
 
 pub const PARTS: Day = [part1, part2];
@@ -38,14 +36,17 @@ fn part1(input: String) -> TaskResult {
 }
 
 fn part2(input: String) -> TaskResult {
+    let mut v = Vec::new();
+
     TaskResult::from(
         input
             .lines()
             .filter(|l| {
-                let v = l
-                    .split_ascii_whitespace()
-                    .map(|x| x.parse().unwrap())
-                    .collect::<ArrayVec<u8, 16>>();
+                v.clear();
+                v.extend(
+                    l.split_ascii_whitespace()
+                        .map(|x| x.parse::<u8>().unwrap()),
+                );
 
                 is_safe(v.iter().cloned())
                     || (0..v.len()).any(|i| {
