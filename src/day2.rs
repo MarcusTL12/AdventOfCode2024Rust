@@ -52,8 +52,7 @@ fn part2(input: String) -> TaskResult {
                         is_safe(
                             v.iter()
                                 .enumerate()
-                                .filter(|&(j, _)| i != j)
-                                .map(|(_, &x)| x),
+                                .filter_map(|(j, &x)| (i != j).then_some(x)),
                         )
                     })
             })
