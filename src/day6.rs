@@ -1,4 +1,8 @@
+use std::cell::Cell;
+
 use ndarray::ArrayViewMut2;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use thread_local::ThreadLocal;
 
 use crate::{Day, TaskResult, util::input_to_grid_owned};
 
@@ -90,15 +94,25 @@ fn part2(input: String) -> TaskResult {
 
     let path = traverse(mat.view_mut(), startpos, true, true).1.unwrap();
 
-    let mut n_loops = 0;
+    let tls = ThreadLocal::new();
 
-    for [i, j] in path.into_iter() {
-        mat[[i, j]] |= 1;
+    let n_loops: u32 = path
+        .into_par_iter()
+        .map(|pos| {
+            let cell = tls.get_or(|| Cell::new(Some(mat.clone())));
+            let mut mat = cell.replace(None).unwrap();
 
-        n_loops += traverse(mat.view_mut(), startpos, false, true).2 as u32;
+            mat[pos] |= 1;
 
-        mat[[i, j]] = 0;
-    }
+            let is_loop = traverse(mat.view_mut(), startpos, false, true).2;
+
+            mat[pos] = 0;
+
+            cell.replace(Some(mat));
+
+            is_loop as u32
+        })
+        .sum();
 
     TaskResult::from(n_loops)
 }
