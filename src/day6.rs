@@ -108,7 +108,7 @@ fn part2(input: String) -> TaskResult {
 
             mat[pos] = 0;
 
-            cell.replace(Some(mat));
+            cell.set(Some(mat));
 
             is_loop as u32
         })
