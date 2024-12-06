@@ -33,17 +33,27 @@ fn move_pos(pos: [usize; 2], dir: usize) -> [usize; 2] {
     ]
 }
 
-fn part1(input: String) -> TaskResult {
-    let mut mat = input_to_grid_owned(input.into_bytes());
-
-    let mut pos = preprocess_and_find_start(mat.view_mut());
+fn traverse(
+    mut mat: ArrayViewMut2<u8>,
+    mut pos: [usize; 2],
+    capture_path: bool,
+    clear: bool,
+) -> (usize, Option<Vec<[usize; 2]>>, bool) {
     let mut dir = 0;
 
-    let mut visited = 0;
+    let mut n_visited = 0;
+    let mut path = capture_path.then_some(Vec::new());
 
-    loop {
+    let is_loop = loop {
         if (mat[pos] & 0b11110) == 0 {
-            visited += 1;
+            n_visited += 1;
+            if let Some(v) = &mut path {
+                v.push(pos);
+            }
+        }
+
+        if (mat[pos] & (1 << (dir + 1))) != 0 {
+            break true;
         }
 
         mat[pos] |= 1 << (dir + 1);
@@ -55,9 +65,25 @@ fn part1(input: String) -> TaskResult {
         if let Some(0) = mat.get(move_pos(pos, dir)).map(|&x| x & 1) {
             pos = move_pos(pos, dir);
         } else {
-            break TaskResult::from(visited);
+            break false;
+        }
+    };
+
+    if clear {
+        for x in mat.as_slice_mut().unwrap().iter_mut() {
+            *x &= 1;
         }
     }
+
+    (n_visited, path, is_loop)
+}
+
+fn part1(input: String) -> TaskResult {
+    let mut mat = input_to_grid_owned(input.into_bytes());
+
+    let pos = preprocess_and_find_start(mat.view_mut());
+
+    TaskResult::from(traverse(mat.view_mut(), pos, false, false).0)
 }
 
 fn part2(input: String) -> TaskResult {
@@ -65,75 +91,22 @@ fn part2(input: String) -> TaskResult {
 
     let w = mat_raw.shape()[1];
 
-    let mut mat = mat_raw.slice_mut(s![.., 0..w - 1]);
+    let mut mat = mat_raw.slice_mut(s![.., 0..w - 1]).to_owned();
 
     let startpos = preprocess_and_find_start(mat.view_mut());
 
-    let mut path = Vec::new();
-
-    let mut pos = startpos;
-    let mut dir = 0;
-
-    loop {
-        if (mat[pos] & 0b11110) == 0 {
-            path.push(pos);
-        }
-
-        mat[pos] |= 1 << (dir + 1);
-
-        while let Some(1) = mat.get(move_pos(pos, dir)).map(|&x| x & 1) {
-            dir = (dir + 1) % 4;
-        }
-
-        if let Some(0) = mat.get(move_pos(pos, dir)).map(|&x| x & 1) {
-            pos = move_pos(pos, dir);
-        } else {
-            break;
-        }
-    }
-
-    for x in mat_raw.as_slice_mut().unwrap().iter_mut() {
-        *x &= 1;
-    }
+    let path = traverse(mat.view_mut(), startpos, true, true).1.unwrap();
 
     let mut n_loops = 0;
 
-    for [i, j] in path.into_iter().skip(1) {
-        let mut mat = mat_raw.slice_mut(s![.., 0..w - 1]);
-
-        if mat[[i, j]] & 1 != 0 {
-            continue;
-        }
-
+    for [i, j] in path.into_iter() {
         mat[[i, j]] |= 1;
 
-        let mut pos = startpos;
-        let mut dir = 0;
-
-        let is_loop = loop {
-            if (mat[pos] & (1 << (dir + 1))) != 0 {
-                break true;
-            }
-
-            mat[pos] |= 1 << (dir + 1);
-
-            while let Some(1) = mat.get(move_pos(pos, dir)).map(|&x| x & 1) {
-                dir = (dir + 1) % 4;
-            }
-
-            if let Some(0) = mat.get(move_pos(pos, dir)).map(|&x| x & 1) {
-                pos = move_pos(pos, dir);
-            } else {
-                break false;
-            }
-        };
-
-        n_loops += is_loop as u32;
+        let is_loop = traverse(mat.view_mut(), startpos, false, true).2;
 
         mat[[i, j]] = 0;
-        for x in mat_raw.as_slice_mut().unwrap().iter_mut() {
-            *x &= 1;
-        }
+
+        n_loops += is_loop as u32;
     }
 
     TaskResult::from(n_loops)
