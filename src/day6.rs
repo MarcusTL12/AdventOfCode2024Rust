@@ -1,9 +1,6 @@
-use ndarray::{ArrayViewMut2, s};
+use ndarray::ArrayViewMut2;
 
-use crate::{
-    Day, TaskResult,
-    util::{input_to_grid_owned, input_to_grid_owned_with_newline},
-};
+use crate::{Day, TaskResult, util::input_to_grid_owned};
 
 pub const PARTS: Day = [part1, part2];
 
@@ -87,11 +84,7 @@ fn part1(input: String) -> TaskResult {
 }
 
 fn part2(input: String) -> TaskResult {
-    let mut mat_raw = input_to_grid_owned_with_newline(input.into_bytes());
-
-    let w = mat_raw.shape()[1];
-
-    let mut mat = mat_raw.slice_mut(s![.., 0..w - 1]).to_owned();
+    let mut mat = input_to_grid_owned(input.into_bytes()).to_owned();
 
     let startpos = preprocess_and_find_start(mat.view_mut());
 
