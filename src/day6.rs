@@ -95,11 +95,9 @@ fn part2(input: String) -> TaskResult {
     for [i, j] in path.into_iter() {
         mat[[i, j]] |= 1;
 
-        let is_loop = traverse(mat.view_mut(), startpos, false, true).2;
+        n_loops += traverse(mat.view_mut(), startpos, false, true).2 as u32;
 
         mat[[i, j]] = 0;
-
-        n_loops += is_loop as u32;
     }
 
     TaskResult::from(n_loops)
