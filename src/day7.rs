@@ -1,3 +1,7 @@
+use rayon::{iter::ParallelIterator, str::ParallelString};
+
+use arrayvec::ArrayVec;
+
 use crate::{Day, TaskResult};
 
 pub const PARTS: Day = [part1, part2];
@@ -20,17 +24,15 @@ fn possible<I: Iterator<Item = u16> + Clone>(
 }
 
 fn part1(input: String) -> TaskResult {
-    let mut buf = Vec::new();
-
     let ans: u64 = input
-        .lines()
+        .par_lines()
         .filter_map(|l| {
             let (target, v) = l.split_once(": ").unwrap();
 
             let target = target.parse().unwrap();
 
-            buf.clear();
-            buf.extend(v.split(' ').map(|x| x.parse::<u16>().unwrap()));
+            let buf: ArrayVec<u16, 16> =
+                v.split(' ').map(|x| x.parse().unwrap()).collect();
 
             let mut it = buf.iter().cloned();
 
@@ -42,11 +44,7 @@ fn part1(input: String) -> TaskResult {
 }
 
 pub fn ndigits(x: u16) -> u32 {
-    if x != 0 {
-        x.ilog10() + 1
-    } else {
-        1
-    }
+    if x != 0 { x.ilog10() + 1 } else { 1 }
 }
 
 fn cat(mut a: u64, b: u16) -> u64 {
@@ -80,17 +78,15 @@ fn possible2<I: Iterator<Item = u16> + Clone>(
 }
 
 fn part2(input: String) -> TaskResult {
-    let mut buf = Vec::new();
-
     let ans: u64 = input
-        .lines()
+        .par_lines()
         .filter_map(|l| {
             let (target, v) = l.split_once(": ").unwrap();
 
             let target = target.parse().unwrap();
 
-            buf.clear();
-            buf.extend(v.split(' ').map(|x| x.parse::<u16>().unwrap()));
+            let buf: ArrayVec<u16, 16> =
+                v.split(' ').map(|x| x.parse().unwrap()).collect();
 
             let mut it = buf.iter().cloned();
 
