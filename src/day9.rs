@@ -4,9 +4,9 @@ use crate::{Day, TaskResult};
 
 pub const PARTS: Day = [part1, part2];
 
-fn part1(input: String) -> TaskResult {
-    type T = u16;
+type T = u16;
 
+fn part1(input: String) -> TaskResult {
     const SPACE: T = T::MAX;
 
     let mut disk: Vec<_> = input
@@ -42,5 +42,34 @@ fn part1(input: String) -> TaskResult {
 }
 
 fn part2(input: String) -> TaskResult {
-    todo!("{input}")
+    let ([mut fls, mut spc], _) = input
+        .as_bytes()
+        .iter()
+        .filter_map(|x| {
+            x.is_ascii_digit().then_some(x.wrapping_sub(b'0') as usize)
+        })
+        .enumerate()
+        .fold(([const { Vec::new() }; 2], 0), |(mut v, pos), (i, len)| {
+            v[i % 2].push((pos, len));
+            (v, pos + len)
+        });
+
+    for (file_pos, file_len) in fls.iter_mut().rev() {
+        for (space_pos, space_len) in
+            spc.iter_mut().take_while(|(p, _)| p < file_pos)
+        {
+            if file_len <= space_len {
+                *file_pos = *space_pos;
+                *space_pos += *file_len;
+                *space_len -= *file_len;
+                break;
+            }
+        }
+    }
+
+    fls.into_iter()
+        .enumerate()
+        .map(|(i, (p, l))| i * (p..p + l).sum::<usize>())
+        .sum::<usize>()
+        .into()
 }
