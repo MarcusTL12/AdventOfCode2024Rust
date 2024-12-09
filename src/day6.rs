@@ -84,7 +84,7 @@ fn part1(input: String) -> TaskResult {
 
     let pos = preprocess_and_find_start(mat.view_mut());
 
-    TaskResult::from(traverse(mat.view_mut(), pos, false, false).0)
+    traverse(mat.view_mut(), pos, false, false).0.into()
 }
 
 fn part2(input: String) -> TaskResult {
@@ -114,5 +114,5 @@ fn part2(input: String) -> TaskResult {
         })
         .sum();
 
-    TaskResult::from(n_loops)
+    n_loops.into()
 }

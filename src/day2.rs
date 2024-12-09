@@ -25,38 +25,35 @@ fn is_safe<I: Iterator<Item = u8>>(mut it: I) -> bool {
 }
 
 fn part1(input: String) -> TaskResult {
-    TaskResult::from(
-        input
-            .lines()
-            .filter(|l| {
-                is_safe(l.split_ascii_whitespace().map(|x| x.parse().unwrap()))
-            })
-            .count(),
-    )
+    input
+        .lines()
+        .filter(|l| {
+            is_safe(l.split_ascii_whitespace().map(|x| x.parse().unwrap()))
+        })
+        .count()
+        .into()
 }
 
 fn part2(input: String) -> TaskResult {
     let mut v = Vec::new();
 
-    TaskResult::from(
-        input
-            .lines()
-            .filter(|l| {
-                v.clear();
-                v.extend(
-                    l.split_ascii_whitespace()
-                        .map(|x| x.parse::<u8>().unwrap()),
-                );
+    input
+        .lines()
+        .filter(|l| {
+            v.clear();
+            v.extend(
+                l.split_ascii_whitespace().map(|x| x.parse::<u8>().unwrap()),
+            );
 
-                is_safe(v.iter().cloned())
-                    || (0..v.len()).any(|i| {
-                        is_safe(
-                            v.iter()
-                                .enumerate()
-                                .filter_map(|(j, &x)| (i != j).then_some(x)),
-                        )
-                    })
-            })
-            .count(),
-    )
+            is_safe(v.iter().cloned())
+                || (0..v.len()).any(|i| {
+                    is_safe(
+                        v.iter()
+                            .enumerate()
+                            .filter_map(|(j, &x)| (i != j).then_some(x)),
+                    )
+                })
+        })
+        .count()
+        .into()
 }

@@ -8,19 +8,18 @@ pub const PARTS: Day = [part1, part2];
 fn part1(input: String) -> TaskResult {
     let reg = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
 
-    TaskResult::from(
-        reg.captures_iter(&input)
-            .map(|c| {
-                c.iter()
-                    .skip(1)
-                    .map(|x| x.unwrap().as_str().parse().unwrap())
-                    .collect::<ArrayVec<u64, 2>>()
-                    .into_inner()
-                    .unwrap()
-            })
-            .map(|[a, b]| a * b)
-            .sum::<u64>(),
-    )
+    reg.captures_iter(&input)
+        .map(|c| {
+            c.iter()
+                .skip(1)
+                .map(|x| x.unwrap().as_str().parse().unwrap())
+                .collect::<ArrayVec<u64, 2>>()
+                .into_inner()
+                .unwrap()
+        })
+        .map(|[a, b]| a * b)
+        .sum::<u64>()
+        .into()
 }
 
 fn part2(input: String) -> TaskResult {
@@ -43,5 +42,5 @@ fn part2(input: String) -> TaskResult {
         }
     }
 
-    TaskResult::from(ans)
+    ans.into()
 }

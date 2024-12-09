@@ -45,7 +45,7 @@ fn part1(input: String) -> TaskResult {
         }
     }
 
-    TaskResult::from(mat.into_iter().filter(|&x| x == b'#').count())
+    mat.into_iter().filter(|&x| x == b'#').count().into()
 }
 
 fn part2(input: String) -> TaskResult {
@@ -77,5 +77,5 @@ fn part2(input: String) -> TaskResult {
         }
     }
 
-    TaskResult::from(mat.into_iter().filter(|&x| x == b'#').count())
+    mat.into_iter().filter(|&x| x == b'#').count().into()
 }

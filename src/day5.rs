@@ -32,7 +32,7 @@ fn part1(input: String) -> TaskResult {
         }
     }
 
-    TaskResult::from(s)
+    s.into()
 }
 
 fn part2(input: String) -> TaskResult {
@@ -62,5 +62,5 @@ fn part2(input: String) -> TaskResult {
         }
     }
 
-    TaskResult::from(s)
+    s.into()
 }

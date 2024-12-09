@@ -40,7 +40,7 @@ fn part1(input: String) -> TaskResult {
         })
         .sum();
 
-    TaskResult::from(ans)
+    ans.into()
 }
 
 pub fn ndigits(x: u16) -> u32 {
@@ -94,5 +94,5 @@ fn part2(input: String) -> TaskResult {
         })
         .sum();
 
-    TaskResult::from(ans)
+    ans.into()
 }
