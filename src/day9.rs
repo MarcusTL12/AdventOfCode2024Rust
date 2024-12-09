@@ -50,7 +50,7 @@ fn part2(input: String) -> TaskResult {
         })
         .enumerate()
         .fold(([const { Vec::new() }; 2], 0), |(mut v, pos), (i, len)| {
-            v[i % 2].push((pos, len));
+            v[i % 2].push((pos as u32, len as u32));
             (v, pos + len)
         });
 
@@ -69,7 +69,7 @@ fn part2(input: String) -> TaskResult {
 
     fls.into_iter()
         .enumerate()
-        .map(|(i, (p, l))| i * (p..p + l).sum::<usize>())
-        .sum::<usize>()
+        .map(|(i, (p, l))| i as u64 * (p..p + l).map(|x| x as u64).sum::<u64>())
+        .sum::<u64>()
         .into()
 }
