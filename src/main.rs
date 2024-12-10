@@ -5,6 +5,7 @@ use home::home_dir;
 mod util;
 
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -59,6 +60,7 @@ const DAYS: &[Day] = &[
     day7::PARTS,
     day8::PARTS,
     day9::PARTS,
+    day10::PARTS,
 ];
 
 fn load_input(day: usize, example: usize) -> String {
