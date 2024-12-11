@@ -43,7 +43,7 @@ fn part1(input: String) -> TaskResult {
     ans.into()
 }
 
-pub fn ndigits(x: u16) -> u32 {
+fn ndigits(x: u16) -> u32 {
     if x != 0 { x.ilog10() + 1 } else { 1 }
 }
 
