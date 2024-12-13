@@ -32,7 +32,7 @@ fn solve_system([a, c, b, d, b1, b2]: [i64; 6]) -> Option<[i64; 2]> {
     let n1 = d * b1 - b * b2;
     let n2 = -c * b1 + a * b2;
 
-    (n1 % det == 0).then(|| [n1 / det, n2 / det])
+    (n1 % det == 0 && n2 % det == 0).then(|| [n1 / det, n2 / det])
 }
 
 fn part1(input: String) -> TaskResult {
