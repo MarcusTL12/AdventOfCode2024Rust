@@ -18,6 +18,7 @@ dependencies = [
  "arrayvec",
  "home",
  "ndarray",
+ "once_cell",
  "rayon",
  "regex",
  "thread_local",
