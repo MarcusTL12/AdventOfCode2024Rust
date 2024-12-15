@@ -6,12 +6,12 @@ use crate::{Day, TaskResult, util::input_to_grid_owned};
 
 pub const PARTS: Day = [part1, part2];
 
+const DIRS: [[isize; 2]; 4] = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+
 fn neighbours([i, j]: [usize; 2]) -> impl Iterator<Item = [usize; 2]> {
-    [[1, 0], [0, 1], [-1, 0], [0, -1]]
-        .into_iter()
-        .map(move |[di, dj]| {
-            [(i as isize + di) as usize, (j as isize + dj) as usize]
-        })
+    DIRS.into_iter().map(move |[di, dj]| {
+        [(i as isize + di) as usize, (j as isize + dj) as usize]
+    })
 }
 
 fn floodfill_ids(
@@ -74,5 +74,31 @@ fn part1(input: String) -> TaskResult {
 }
 
 fn part2(input: String) -> TaskResult {
-    todo!("{input}")
+    let mut colors = input_to_grid_owned(input.into_bytes());
+    let mut ids = Array2::from_elem(colors.dim(), None);
+
+    let (h, w) = colors.dim();
+
+    let mut areas = Vec::new();
+
+    for i in 0..h {
+        for j in 0..w {
+            let color = colors[[i, j]];
+
+            let id =
+                floodfill_ids(&mut colors, &mut ids, [i, j], areas.len() + 1);
+
+            if id > areas.len() {
+                areas.push([0; 2]);
+            }
+
+            areas[id - 1][0] += 1;
+
+            for dir in DIRS {
+                
+            }
+        }
+    }
+
+    areas.into_iter().map(|[a, p]| a * p).sum::<u64>().into()
 }
