@@ -18,6 +18,7 @@ dependencies = [
  "arrayvec",
  "home",
  "ndarray",
+ "num-traits",
  "once_cell",
  "rayon",
  "regex",
