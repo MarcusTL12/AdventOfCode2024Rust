@@ -1,6 +1,8 @@
 use ndarray::{Array2, ArrayView2, s};
 use num_traits::{AsPrimitive, PrimInt};
 
+use num_integer::Integer;
+
 fn linelen(input: &[u8]) -> usize {
     input
         .iter()
@@ -44,4 +46,11 @@ pub fn add_coords<
     }
 
     c
+}
+
+pub fn crt(a1: i64, n1: i64, a2: i64, n2: i64) -> i64 {
+    let gcd = i64::extended_gcd(&n1, &n2);
+    let x = (a2 * n1 * gcd.x + a1 * n2 * gcd.y) % (n1 * n2);
+
+    if x < 0 { x + n1 * n2 } else { x }
 }
