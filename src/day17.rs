@@ -110,7 +110,10 @@ fn part2(input: String) -> TaskResult {
     let (_, program) = parse_input(input);
 
     let strider = Simd::from_array(
-        (0..N).collect::<ArrayVec<_, N>>().into_inner().unwrap(),
+        (0..N as u64)
+            .collect::<ArrayVec<_, N>>()
+            .into_inner()
+            .unwrap(),
     );
 
     let limit: u64 = 38_000_000_000_000;
