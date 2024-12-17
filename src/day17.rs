@@ -1,5 +1,6 @@
 use std::simd::{Mask, Simd, cmp::SimdPartialEq};
 
+use arrayvec::ArrayVec;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use regex::Regex;
 
@@ -108,7 +109,9 @@ fn check_a(program: &[u8], mut a: Simd<u64, N>) -> Mask<i64, N> {
 fn part2(input: String) -> TaskResult {
     let (_, program) = parse_input(input);
 
-    let strider = Simd::from_array([0, 1, 2, 3, 4, 5, 6, 7]);
+    let strider = Simd::from_array(
+        (0..N).collect::<ArrayVec<_, N>>().into_inner().unwrap(),
+    );
 
     let limit: u64 = 38_000_000_000_000;
 
