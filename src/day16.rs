@@ -85,7 +85,7 @@ fn part2(input: String) -> TaskResult {
     );
 
     let mut distmap = Array2::from_elem(grid.dim(), [0u32; 4]);
-    let mut backtracker = Array2::from_elem(grid.dim(), 0u8);
+    let mut backtracker = Array2::from_elem(grid.dim(), 0u16);
 
     let mut pq = PriorityQueue::new();
     pq.push((start, 0, 0), 0i64);
@@ -95,7 +95,9 @@ fn part2(input: String) -> TaskResult {
 
         if grid[pos] & dirflag == 0 || distmap[pos][dir] == (-score) as u32 {
             distmap[pos][dir] = (-score) as u32;
-            backtracker[pos] |= from;
+            if from != 0 {
+                backtracker[pos] |= (1 << (from - 1)) << (dir * 3);
+            }
         }
 
         grid[pos] |= dirflag;
@@ -106,34 +108,54 @@ fn part2(input: String) -> TaskResult {
 
         let npos = add_coords(pos, DIRS[dir]);
         if grid[npos] & (1 | dirflag) == 0 {
-            pq.push_increase((npos, dir, dirflag >> 1), score - 1);
+            pq.push_increase((npos, dir, 1), score - 1);
         }
 
-        for dir_off in [1, 3] {
+        for (dir_off, dir_id) in [(1, 2), (3, 3)] {
             let ndir = (dir + dir_off) % 4;
             let ndirflag = 1 << (ndir + 1);
             if grid[pos] & (1 | ndirflag) == 0 {
-                pq.push_increase((pos, ndir, from), score - 1000);
+                pq.push_increase((pos, ndir, dir_id), score - 1000);
             }
         }
     }
 
-    backtrack_count(&mut backtracker, stop).into()
+    (0..4)
+        .map(|i| backtrack_count(&mut backtracker, stop, i))
+        .sum::<usize>()
+        .into()
 }
 
-fn backtrack_count(backtracker: &mut Array2<u8>, pos: [usize; 2]) -> usize {
-    let dirs = backtracker[pos];
+fn backtrack_count(
+    backtracker: &mut Array2<u16>,
+    pos: [usize; 2],
+    dir: usize,
+) -> usize {
+    let data = backtracker[pos];
 
-    if (dirs >> 4) & 1 == 1 {
+    if (data >> (12 + dir)) & 1 == 1 {
         return 0;
     }
 
-    backtracker[pos] |= 1 << 4;
+    let mut s = if (data >> 12) == 0 { 1 } else { 0 };
 
-    1 + DIRS
-        .into_iter()
-        .enumerate()
-        .filter(|(i, _)| (dirs >> ((i + 2) % 4)) & 1 == 1)
-        .map(|(_, dir)| backtrack_count(backtracker, add_coords(pos, dir)))
-        .sum::<usize>()
+    backtracker[pos] |= 1 << (12 + dir);
+
+    let dir_data = (data >> (dir * 3)) & 0b111;
+
+    if dir_data & 1 != 0 {
+        s += backtrack_count(
+            backtracker,
+            add_coords(pos, DIRS[(dir + 2) % 4]),
+            dir,
+        );
+    }
+
+    for (i, dir_off) in [3, 1].into_iter().enumerate() {
+        if (dir_data >> (i + 1)) & 1 != 0 {
+            s += backtrack_count(backtracker, pos, (dir + dir_off) % 4);
+        }
+    }
+
+    s
 }
