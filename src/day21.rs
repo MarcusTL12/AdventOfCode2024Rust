@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use crate::{Day, TaskResult};
 
 pub const PARTS: Day = [part1, part2];
 
 fn n_moves_x_first(
+    memo: &mut HashMap<(usize, [[i64; 2]; 2], bool), i64>,
     depth: usize,
     from: [i64; 2],
     to: [i64; 2],
@@ -38,7 +41,8 @@ fn n_moves_x_first(
             _ => unreachable!(),
         };
 
-        n_steps += n_moves(depth - 1, [robot_x, robot_y], [tx, ty], false);
+        n_steps +=
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
         robot_x = tx;
         robot_y = ty;
     }
@@ -54,18 +58,20 @@ fn n_moves_x_first(
             _ => unreachable!(),
         };
 
-        n_steps += n_moves(depth - 1, [robot_x, robot_y], [tx, ty], false);
+        n_steps +=
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
         robot_x = tx;
         robot_y = ty;
     }
 
     // Move back to 'A' key to press it once
-    n_steps += n_moves(depth - 1, [robot_x, robot_y], [2, 0], false);
+    n_steps += n_moves(memo, depth - 1, [robot_x, robot_y], [2, 0], false);
 
     Some(n_steps)
 }
 
 fn n_moves_y_first(
+    memo: &mut HashMap<(usize, [[i64; 2]; 2], bool), i64>,
     depth: usize,
     from: [i64; 2],
     to: [i64; 2],
@@ -101,7 +107,8 @@ fn n_moves_y_first(
             _ => unreachable!(),
         };
 
-        n_steps += n_moves(depth - 1, [robot_x, robot_y], [tx, ty], false);
+        n_steps +=
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
         robot_x = tx;
         robot_y = ty;
     }
@@ -117,30 +124,47 @@ fn n_moves_y_first(
             _ => unreachable!(),
         };
 
-        n_steps += n_moves(depth - 1, [robot_x, robot_y], [tx, ty], false);
+        n_steps +=
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
         robot_x = tx;
         robot_y = ty;
     }
 
     // Move back to 'A' key to press it once
-    n_steps += n_moves(depth - 1, [robot_x, robot_y], [2, 0], false);
+    n_steps += n_moves(memo, depth - 1, [robot_x, robot_y], [2, 0], false);
 
     Some(n_steps)
 }
 
-fn n_moves(depth: usize, from: [i64; 2], to: [i64; 2], is_keypad: bool) -> i64 {
+fn n_moves(
+    memo: &mut HashMap<(usize, [[i64; 2]; 2], bool), i64>,
+    depth: usize,
+    from: [i64; 2],
+    to: [i64; 2],
+    is_keypad: bool,
+) -> i64 {
     if depth == 0 {
         return 1;
     }
 
-    [
-        n_moves_x_first(depth, from, to, is_keypad),
-        n_moves_y_first(depth, from, to, is_keypad),
+    let k = (depth, [from, to], is_keypad);
+
+    if let Some(&x) = memo.get(&k) {
+        return x;
+    }
+
+    let x = [
+        n_moves_x_first(memo, depth, from, to, is_keypad),
+        n_moves_y_first(memo, depth, from, to, is_keypad),
     ]
     .into_iter()
     .flatten()
     .min()
-    .unwrap()
+    .unwrap();
+
+    memo.insert(k, x);
+
+    x
 }
 
 fn keypad_coords(key: u8) -> [i64; 2] {
@@ -161,39 +185,51 @@ fn keypad_coords(key: u8) -> [i64; 2] {
 }
 
 fn part1(input: String) -> TaskResult {
-    input.lines().map(|l| {
-        let m: i64 = l.split_at(l.len() - 1).0.parse().unwrap();
+    let mut memo = HashMap::new();
 
-        let mut x = 2;
-        let mut y = 3;
+    input
+        .lines()
+        .map(|l| {
+            let m: i64 = l.split_at(l.len() - 1).0.parse().unwrap();
 
-        let mut n = 0;
+            let mut x = 2;
+            let mut y = 3;
 
-        for &key in l.as_bytes() {
-            let [tx, ty] = keypad_coords(key);
-            n += n_moves(3, [x, y], [tx, ty], true);
-            [x, y] = [tx, ty];
-        }
+            let mut n = 0;
 
-        n * m
-    }).sum::<i64>().into()
+            for &key in l.as_bytes() {
+                let [tx, ty] = keypad_coords(key);
+                n += n_moves(&mut memo, 3, [x, y], [tx, ty], true);
+                [x, y] = [tx, ty];
+            }
+
+            n * m
+        })
+        .sum::<i64>()
+        .into()
 }
 
 fn part2(input: String) -> TaskResult {
-    input.lines().map(|l| {
-        let m: i64 = l.split_at(l.len() - 1).0.parse().unwrap();
+    let mut memo = HashMap::new();
 
-        let mut x = 2;
-        let mut y = 3;
+    input
+        .lines()
+        .map(|l| {
+            let m: i64 = l.split_at(l.len() - 1).0.parse().unwrap();
 
-        let mut n = 0;
+            let mut x = 2;
+            let mut y = 3;
 
-        for &key in l.as_bytes() {
-            let [tx, ty] = keypad_coords(key);
-            n += n_moves(11, [x, y], [tx, ty], true);
-            [x, y] = [tx, ty];
-        }
+            let mut n = 0;
 
-        n * m
-    }).sum::<i64>().into()
+            for &key in l.as_bytes() {
+                let [tx, ty] = keypad_coords(key);
+                n += n_moves(&mut memo, 26, [x, y], [tx, ty], true);
+                [x, y] = [tx, ty];
+            }
+
+            n * m
+        })
+        .sum::<i64>()
+        .into()
 }
