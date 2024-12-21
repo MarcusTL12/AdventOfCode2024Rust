@@ -11,8 +11,8 @@ fn n_moves_x_first(
     to: [i64; 2],
     is_keypad: bool,
 ) -> Option<i64> {
-    let mut dx = to[0] - from[0];
-    let mut dy = to[1] - from[1];
+    let dx = to[0] - from[0];
+    let dy = to[1] - from[1];
 
     if depth == 0 {
         panic!()
@@ -31,9 +31,8 @@ fn n_moves_x_first(
     let mut n_steps = 0;
 
     // Do left or right button press using next robot
-    while dx != 0 {
+    if dx != 0 {
         let s = dx.signum();
-        dx -= s;
 
         let [tx, ty] = match s {
             1 => [2, 1],
@@ -42,15 +41,17 @@ fn n_moves_x_first(
         };
 
         n_steps +=
-            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false)
+                + dx.abs()
+                - 1;
+
         robot_x = tx;
         robot_y = ty;
     }
 
     // Do up or down button press using next robot
-    while dy != 0 {
+    if dy != 0 {
         let s = dy.signum();
-        dy -= s;
 
         let [tx, ty] = match s {
             1 => [1, 1],
@@ -59,7 +60,9 @@ fn n_moves_x_first(
         };
 
         n_steps +=
-            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false)
+                + dy.abs()
+                - 1;
         robot_x = tx;
         robot_y = ty;
     }
@@ -77,8 +80,8 @@ fn n_moves_y_first(
     to: [i64; 2],
     is_keypad: bool,
 ) -> Option<i64> {
-    let mut dx = to[0] - from[0];
-    let mut dy = to[1] - from[1];
+    let dx = to[0] - from[0];
+    let dy = to[1] - from[1];
 
     if depth == 0 {
         panic!()
@@ -97,9 +100,8 @@ fn n_moves_y_first(
     let mut n_steps = 0;
 
     // Do up or down button press using next robot
-    while dy != 0 {
+    if dy != 0 {
         let s = dy.signum();
-        dy -= s;
 
         let [tx, ty] = match s {
             1 => [1, 1],
@@ -108,15 +110,17 @@ fn n_moves_y_first(
         };
 
         n_steps +=
-            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false)
+                + dy.abs()
+                - 1;
+
         robot_x = tx;
         robot_y = ty;
     }
 
     // Do left or right button press using next robot
-    while dx != 0 {
+    if dx != 0 {
         let s = dx.signum();
-        dx -= s;
 
         let [tx, ty] = match s {
             1 => [2, 1],
@@ -125,7 +129,10 @@ fn n_moves_y_first(
         };
 
         n_steps +=
-            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false);
+            n_moves(memo, depth - 1, [robot_x, robot_y], [tx, ty], false)
+                + dx.abs()
+                - 1;
+
         robot_x = tx;
         robot_y = ty;
     }
