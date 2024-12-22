@@ -1,4 +1,4 @@
-use std::simd::Simd;
+use std::{collections::HashMap, simd::Simd};
 
 use crate::{Day, TaskResult};
 
@@ -53,6 +53,32 @@ fn part1(input: String) -> TaskResult {
     (main_sum + rest_sum).into()
 }
 
+fn prices_iter(seed: u32) -> impl Iterator<Item = ([i8; 4], i8)> {
+    (0..=2000)
+        .scan(seed, |secret, _| {
+            let old_secret = *secret;
+            *secret = evolve(*secret);
+            Some((old_secret % 10) as i8)
+        })
+        .map_windows(|&[a, b]| (b, b - a))
+        .map_windows(|&[(_, a), (_, b), (_, c), (p, d)]| ([a, b, c, d], p))
+}
+
 fn part2(input: String) -> TaskResult {
-    todo!("{input}")
+    let mut line_map = HashMap::new();
+    let mut full_map = HashMap::new();
+
+    for n in input.lines().map(|l| l.parse().unwrap()) {
+        line_map.clear();
+
+        for (dp, p) in prices_iter(n) {
+            line_map.entry(dp).or_insert(p);
+        }
+
+        for (&dp, &p) in &line_map {
+            *full_map.entry(dp).or_insert(0) += p as u64;
+        }
+    }
+
+    full_map.values().max().cloned().unwrap().into()
 }
