@@ -12,7 +12,7 @@ fn evolve(mut secret: u32) -> u32 {
     secret
 }
 
-const N: usize = 8;
+const N: usize = 64;
 
 fn evolve_simd(mut secret: Simd<u32, N>) -> Simd<u32, N> {
     secret = ((secret << 6) ^ secret) & Simd::splat(0xffffff);
