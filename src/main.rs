@@ -1,4 +1,4 @@
-#![feature(portable_simd)]
+#![feature(portable_simd, iter_array_chunks)]
 
 use std::{env, fmt::Display, fs::read_to_string, time::Instant};
 
@@ -20,6 +20,7 @@ mod day19;
 mod day2;
 mod day20;
 mod day21;
+mod day22;
 mod day3;
 mod day4;
 mod day5;
@@ -85,6 +86,7 @@ const DAYS: &[Day] = &[
     day19::PARTS,
     day20::PARTS,
     day21::PARTS,
+    day22::PARTS,
 ];
 
 fn load_input(day: usize, example: usize) -> String {
