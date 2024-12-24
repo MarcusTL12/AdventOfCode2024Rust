@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::{Day, TaskResult, bitarray::BitArray, util::display_join};
 
@@ -38,20 +38,33 @@ fn parse_input(input: &str) -> (Vec<&str>, Vec<BitArray<N>>) {
 }
 
 fn part1(input: String) -> TaskResult {
-    let _connections = parse_input(&input);
+    let (computers, connections) = parse_input(&input);
 
-    let mut bits = BitArray::<4>::new();
+    let mut triplets = HashSet::new();
 
-    bits.set_range(50, 150, true);
-    bits.set_range(60, 140, false);
+    for i in 0..connections.len() {
+        if !computers[i].starts_with('t') {
+            continue;
+        }
+        for j in 0..connections.len() {
+            if j == i {
+                continue;
+            }
+            for k in 0..j {
+                if k == i {
+                    continue;
+                }
+                if connections[i][j] && connections[i][k] && connections[j][k] {
+                    let mut triplet =
+                        [computers[i], computers[j], computers[k]];
+                    triplet.sort();
+                    triplets.insert(triplet);
+                }
+            }
+        }
+    }
 
-    println!("{bits}");
-
-    let tmp = bits.trues_iter().collect::<Vec<_>>();
-
-    println!("{tmp:?}");
-
-    todo!()
+    triplets.len().into()
 }
 
 fn part2(input: String) -> TaskResult {
