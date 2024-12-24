@@ -24,6 +24,7 @@ mod day20;
 mod day21;
 mod day22;
 mod day23;
+mod day24;
 mod day3;
 mod day4;
 mod day5;
@@ -91,6 +92,7 @@ const DAYS: &[Day] = &[
     day21::PARTS,
     day22::PARTS,
     day23::PARTS,
+    day24::PARTS,
 ];
 
 fn load_input(day: usize, example: usize) -> String {

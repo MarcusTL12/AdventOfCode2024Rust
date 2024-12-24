@@ -1,5 +1,9 @@
-use std::{fmt::Display, io::{self, Write}};
+use std::{
+    fmt::{Debug, Display},
+    io::{self, Write},
+};
 
+use arrayvec::ArrayVec;
 use ndarray::{Array2, ArrayView2, s};
 use num_traits::{AsPrimitive, PrimInt};
 
@@ -71,4 +75,14 @@ pub fn display_join<T: Display, I: Iterator<Item = T>, S: Display>(
     }
 
     Ok(())
+}
+
+pub trait ConstCollect<T> {
+    fn collect_const<const N: usize>(self) -> Option<[T; N]>;
+}
+
+impl<T: Debug, I: Iterator<Item = T>> ConstCollect<T> for I {
+    fn collect_const<const N: usize>(self) -> Option<[T; N]> {
+        self.collect::<ArrayVec<_, N>>().into_inner().ok()
+    }
 }
