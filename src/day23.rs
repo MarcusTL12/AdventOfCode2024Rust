@@ -51,7 +51,7 @@ fn part1(input: String) -> TaskResult {
                 .trues_iter()
                 .filter(|&k| k > j && connections[j][k])
             {
-                let mut triplet = [computers[i], computers[j], computers[k]];
+                let mut triplet = [i, j, k];
                 triplet.sort();
                 triplets.insert(triplet);
             }
