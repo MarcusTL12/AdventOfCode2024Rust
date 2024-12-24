@@ -4,6 +4,8 @@ use std::{env, fmt::Display, fs::read_to_string, time::Instant};
 
 use home::home_dir;
 
+pub mod bitarray;
+
 mod util;
 
 mod day1;
@@ -21,6 +23,7 @@ mod day2;
 mod day20;
 mod day21;
 mod day22;
+mod day23;
 mod day3;
 mod day4;
 mod day5;
@@ -87,6 +90,7 @@ const DAYS: &[Day] = &[
     day20::PARTS,
     day21::PARTS,
     day22::PARTS,
+    day23::PARTS,
 ];
 
 fn load_input(day: usize, example: usize) -> String {
