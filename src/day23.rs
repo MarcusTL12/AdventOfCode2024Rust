@@ -46,20 +46,14 @@ fn part1(input: String) -> TaskResult {
         if !computers[i].starts_with('t') {
             continue;
         }
-        for j in 0..connections.len() {
-            if j == i {
-                continue;
-            }
-            for k in 0..j {
-                if k == i {
-                    continue;
-                }
-                if connections[i][j] && connections[i][k] && connections[j][k] {
-                    let mut triplet =
-                        [computers[i], computers[j], computers[k]];
-                    triplet.sort();
-                    triplets.insert(triplet);
-                }
+        for j in connections[i].trues_iter() {
+            for k in connections[i]
+                .trues_iter()
+                .filter(|&k| k > j && connections[j][k])
+            {
+                let mut triplet = [computers[i], computers[j], computers[k]];
+                triplet.sort();
+                triplets.insert(triplet);
             }
         }
     }
