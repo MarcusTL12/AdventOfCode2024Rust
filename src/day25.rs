@@ -2,16 +2,19 @@ use crate::{Day, TaskResult};
 
 pub const PARTS: Day = [part1, part2];
 
-fn part1(input: String) -> TaskResult {
+fn part1(mut input: String) -> TaskResult {
+    input.push('\n');
     let data: Vec<u64> = input
-        .split("\n\n")
+        .as_bytes()
+        .as_chunks::<43>()
+        .0
+        .iter()
         .map(|l| {
-            l.as_bytes().iter().map(|&x| x == b'#').fold(
-                [0, 1],
-                |[acc, base], bit| {
+            l.iter()
+                .map(|&x| x == b'#')
+                .fold([0, 1], |[acc, base], bit| {
                     [acc | if bit { base } else { 0 }, base << 1]
-                },
-            )[0]
+                })[0]
         })
         .collect();
 

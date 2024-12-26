@@ -1,4 +1,4 @@
-#![feature(portable_simd, iter_array_chunks, iter_map_windows)]
+#![feature(portable_simd, iter_array_chunks, iter_map_windows, slice_as_chunks)]
 
 use std::{env, fmt::Display, fs::read_to_string, time::Instant};
 
