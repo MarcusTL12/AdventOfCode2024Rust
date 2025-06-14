@@ -18,7 +18,7 @@ fn linelen(input: &[u8]) -> usize {
         .unwrap()
 }
 
-pub fn input_to_grid(input: &[u8]) -> ArrayView2<u8> {
+pub fn input_to_grid(input: &'_ [u8]) -> ArrayView2<'_, u8> {
     let w = linelen(input);
     let h = input.len() / (w + 1);
 
