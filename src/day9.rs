@@ -17,7 +17,7 @@ fn part1(input: String) -> TaskResult {
         })
         .enumerate()
         .flat_map(|(i, x)| {
-            if (i % 2) != 0 {
+            if !i.is_multiple_of(2) {
                 iter::repeat_n(SPACE, x)
             } else {
                 iter::repeat_n((i / 2) as T, x)

@@ -11,7 +11,7 @@ fn ndigits(x: u64) -> u32 {
 fn split_number(n: u64) -> Option<[u64; 2]> {
     let nd = ndigits(n);
 
-    (nd % 2 == 0).then(|| {
+    nd.is_multiple_of(2).then(|| {
         let tens = 10u64.pow(nd / 2);
 
         let a = n / tens;
